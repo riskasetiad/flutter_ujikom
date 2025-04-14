@@ -31,27 +31,51 @@ class LoginController extends GetxController {
 
   @override
   void loginNow() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      Get.snackbar(
+        'Oops!',
+        'Email dan password wajib diisi.',
+        icon: const Icon(Icons.info_outline, color: Colors.white),
+        backgroundColor: Colors.orange.shade400,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(12),
+        borderRadius: 12,
+      );
+      return;
+    }
+
     final response = await _getConnect.post(BaseUrl.login, {
-      'email': emailController.text,
-      'password': passwordController.text,
+      'email': email,
+      'password': password,
     });
 
     if (response.statusCode == 200) {
       authToken.write('access_token', response.body['access_token']);
       Get.offAll(() => const DashboardView());
     } else {
+      String errorMsg = 'Terjadi kesalahan. Silakan coba lagi.';
+      if (response.body != null && response.body['error'] != null) {
+        final error = response.body['error'].toString().toLowerCase();
+        if (error.contains('email')) {
+          errorMsg = 'Email tidak terdaftar.';
+        } else if (error.contains('password')) {
+          errorMsg = 'Password yang dimasukkan salah.';
+        } else {
+          errorMsg = response.body['error'].toString();
+        }
+      }
+
       Get.snackbar(
-        'Error',
-        response.body['error'].toString(),
-        icon: const Icon(Icons.error),
-        backgroundColor: Colors.red,
+        'Login Gagal',
+        errorMsg,
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+        backgroundColor: Colors.red.shade400,
         colorText: Colors.white,
-        forwardAnimationCurve: Curves.bounceIn,
-        margin: const EdgeInsets.only(
-          top: 10,
-          left: 5,
-          right: 5,
-        ),
+        margin: const EdgeInsets.all(12),
+        borderRadius: 12,
       );
     }
   }

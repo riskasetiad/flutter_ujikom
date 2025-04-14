@@ -23,12 +23,15 @@ class EventDetailView extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: event.image != null
-                  ? Image.network(event.image!,
-                      height: 200, width: double.infinity, fit: BoxFit.cover)
+                  ? Image.network(
+                      ("http://192.168.0.162:8000/${event.image!}"),
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover)
                   : Container(
                       height: 200,
                       color: Colors.grey.shade300,
-                      child: const Center(child: Icon(Icons.image, size: 40)),
+                      child: const Center(child: Icon(Icons.broken_image)),
                     ),
             ),
             const SizedBox(height: 16),

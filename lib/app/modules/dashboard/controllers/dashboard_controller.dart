@@ -36,9 +36,9 @@ class DashboardController extends GetxController {
   Future<EventResponse> getEvent() async {
     try {
       final response = await dio.get(
-        'http://192.168.150.21:8000/api/events', // URL API
+        'http:///192.168.0.162:8000/api/events', // URL API
         options: Options(
-          headers: {'Authorization': 'Bearer 104|xu3CJpT58DfeQfPsW3Z5fY7V7dRCXP40LQmP7WJ2246df23c'},
+          headers: {'Authorization': 'Bearer 125|GemcvOa633Fmbu9UuvAJ3xMTcNftfXI9ybS4ym8U6b24b405'},
           contentType: 'application/json',
         ),
       );
@@ -61,9 +61,9 @@ class DashboardController extends GetxController {
   Future<void> getYourEvent() async {
     try {
       final response = await dio.get(
-        'http://192.168.150.21:8000/api/your-event', // URL API
+        'http:///192.168.0.162:8000/api/your-event', // URL API
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer 125|GemcvOa633Fmbu9UuvAJ3xMTcNftfXI9ybS4ym8U6b24b405'},
           contentType: 'application/json',
         ),
       );

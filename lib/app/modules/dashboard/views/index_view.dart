@@ -23,7 +23,7 @@ class _IndexViewState extends State<IndexView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[100], // ✅ Warna background
+      backgroundColor: Colors.blue[100],
       appBar: AppBar(
         title: const Text(
           '🎟️ EventWay',
@@ -53,24 +53,33 @@ class _IndexViewState extends State<IndexView> {
                   Get.to(() => EventDetailView(event: event));
                 },
                 child: Card(
-                  elevation: 4, // ✅ Shadow ringan
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  color: Colors.white, // ✅ Warna card putih
+                  color: Colors.white,
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(16)),
+                          top: Radius.circular(16),
+                        ),
                         child: event.image != null
                             ? Image.network(
-                                event.image!,
+                                ("http://192.168.0.162:8000/${event.image!}"),
                                 height: 180,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 180,
+                                    color: Colors.grey.shade300,
+                                    child: const Center(
+                                        child: Icon(Icons.broken_image)),
+                                  );
+                                },
                               )
                             : Container(
                                 height: 180,

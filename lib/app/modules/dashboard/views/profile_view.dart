@@ -8,7 +8,6 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil Pengguna')),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -22,7 +21,7 @@ class ProfileView extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min, // Biar tetap di tengah
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       data.image != null
@@ -54,8 +53,10 @@ class ProfileView extends StatelessWidget {
               );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.fetchProfile(),
-        child: const Icon(Icons.refresh),
+        onPressed: () => controller.logout(), 
+        child: const Icon(Icons.logout),
+        backgroundColor: Color.fromARGB(255, 194, 232, 254),
+        tooltip: 'Keluar',
       ),
     );
   }

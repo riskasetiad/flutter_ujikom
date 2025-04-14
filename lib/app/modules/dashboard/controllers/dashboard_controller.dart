@@ -1,18 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:eventway_p5/app/data/event_response.dart';
 import 'package:eventway_p5/app/modules/dashboard/views/index_view.dart';
 import 'package:eventway_p5/app/modules/dashboard/views/kategori_view.dart';
 import 'package:eventway_p5/app/modules/dashboard/views/profile_view.dart';
 import 'package:eventway_p5/app/modules/dashboard/views/your_event_view.dart';
-import 'package:eventway_p5/app/utils/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class DashboardController extends GetxController {
-  final _getConnect = GetConnect();
+  final Dio dio = Dio();
   final token = GetStorage().read('token');
 
-  // Reactive loading state
+  // Reactive state untuk loading
   var isLoading = false.obs;
 
   // Untuk event yang ditampilkan di halaman utama
@@ -21,53 +21,55 @@ class DashboardController extends GetxController {
   // Untuk event milik pengguna
   var yourEvents = <Events>[].obs;
 
-  // Untuk navigasi tab
+  // Reactive state untuk navigasi tab
   var selectedIndex = 0.obs;
 
   // Halaman-halaman dashboard
   final List<Widget> pages = [
     IndexView(),
-    KategoriView(),
+    YourEventView(),
     ProfileView(),
+    KategoriView(),
   ];
 
   /// Ambil semua event (Index)
   Future<EventResponse> getEvent() async {
     try {
-      // isLoading.value = true;
-      final response = await _getConnect.get(
-        BaseUrl.event,
-        headers: {'Authorization': 'Bearer $token'},
-        contentType: "application/json",
+      final response = await dio.get(
+        'http://192.168.150.21:8000/api/events', // URL API
+        options: Options(
+          headers: {'Authorization': 'Bearer 104|xu3CJpT58DfeQfPsW3Z5fY7V7dRCXP40LQmP7WJ2246df23c'},
+          contentType: 'application/json',
+        ),
       );
 
-      print("EVENT RESPONSE: ${response.body}");
+      print("EVENT RESPONSE: ${response.data}");
       print("STATUS CODE: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        return EventResponse.fromJson(response.body);
+        return EventResponse.fromJson(response.data);
       } else {
         throw Exception("Gagal memuat event, kode: ${response.statusCode}");
       }
     } catch (e) {
       print("Error saat mengambil event: $e");
       throw Exception("Terjadi kesalahan saat mengambil event");
-    } finally {
-      isLoading.value = false;
     }
   }
 
   /// Ambil event milik user
   Future<void> getYourEvent() async {
     try {
-      final response = await _getConnect.get(
-        BaseUrl.yourEvent,
-        headers: {'Authorization': 'Bearer $token'},
-        contentType: "application/json",
+      final response = await dio.get(
+        'http://192.168.150.21:8000/api/your-event', // URL API
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+          contentType: 'application/json',
+        ),
       );
 
       if (response.statusCode == 200) {
-        final eventResponse = EventResponse.fromJson(response.body);
+        final eventResponse = EventResponse.fromJson(response.data);
         yourEvents.value = eventResponse.events ?? [];
       } else {
         print("Gagal memuat event Anda, kode: ${response.statusCode}");
@@ -91,7 +93,7 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    eventFuture = getEvent();
-    getYourEvent();
+    eventFuture = getEvent(); // Ambil semua event
+    getYourEvent(); // Ambil event milik pengguna
   }
 }

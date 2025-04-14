@@ -18,9 +18,9 @@ class ProfileController extends GetxController {
       isLoading.value = true;
 
       final response = await http.get(
-        Uri.parse('http://192.168.197.21:8000/api/user'),
+        Uri.parse('http://192.168.0.162:8000/api/user'),
         headers: {
-          'Authorization': 'Bearer 81|00y9wbMjeRfVsBrYEvMgb0tG0C0ej8fuqzPG2lUs4cb21133',
+          'Authorization': 'Bearer 104|xu3CJpT58DfeQfPsW3Z5fY7V7dRCXP40LQmP7WJ2246df23c',
           'Accept': 'application/json',
         },
       );

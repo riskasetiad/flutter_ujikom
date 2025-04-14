@@ -1,108 +1,144 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:eventway_p5/app/data/event_response.dart';
 import 'package:eventway_p5/app/modules/dashboard/controllers/dashboard_controller.dart';
 import 'package:eventway_p5/app/modules/dashboard/views/event_detail_view.dart';
-import 'package:zoom_tap_animation/zoom_tap_animation.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class IndexView extends GetView<DashboardController> {
-  const IndexView({super.key});
-
+class IndexView extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Event List'),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<EventResponse>(
-          future: controller.eventFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (!snapshot.hasData ||
-                snapshot.data?.events == null ||
-                snapshot.data!.events!.isEmpty) {
-              return const Center(child: Text("Tidak ada event"));
-            }
-
-            final events = snapshot.data!.events!;
-
-            return ListView.builder(
-              controller: scrollController,
-              itemCount: events.length,
-              itemBuilder: (context, index) {
-                final event = events[index];
-                return EventCard(event: event);
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
+  _IndexViewState createState() => _IndexViewState();
 }
 
-class EventCard extends StatelessWidget {
-  final Events event;
+class _IndexViewState extends State<IndexView> {
+  final DashboardController _controller = Get.find();
+  late Future<List<Events>> _futureEvents;
 
-  const EventCard({super.key, required this.event});
+  @override
+  void initState() {
+    super.initState();
+    _futureEvents =
+        _controller.getEvent().then((response) => response.events ?? []);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ZoomTapAnimation(
-      onTap: () => Get.to(() => EventDetailView(event: event)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          if (event.image != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                event.image!,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-          const SizedBox(height: 8),
-          Text(
-            event.title ?? 'Judul Tidak Tersedia',
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Tanggal: ${event.tglMulai ?? 'Belum ditentukan'}',
-            style: const TextStyle(fontSize: 16, color: Colors.black54),
-          ),
-          const SizedBox(height: 4),
-          if (event.kategori?.kategori != null)
-            Text(
-              'Kategori: ${event.kategori!.kategori!}',
-              style: const TextStyle(fontSize: 16, color: Colors.blueAccent),
-            ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(Icons.location_on, color: Colors.red),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  event.lokasi ?? 'Lokasi Tidak Tersedia',
-                  style: const TextStyle(fontSize: 16),
+    return Scaffold(
+      backgroundColor: Colors.blue[100], // ✅ Warna background
+      appBar: AppBar(
+        title: const Text(
+          '🎟️ EventWay',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.blue[100],
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: FutureBuilder<List<Events>>(
+        future: _futureEvents,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return const Center(child: CircularProgressIndicator());
+
+          if (snapshot.hasError)
+            return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
+
+          final events = snapshot.data!;
+          return ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              final event = events[index];
+              return GestureDetector(
+                onTap: () {
+                  Get.to(() => EventDetailView(event: event));
+                },
+                child: Card(
+                  elevation: 4, // ✅ Shadow ringan
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  color: Colors.white, // ✅ Warna card putih
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16)),
+                        child: event.image != null
+                            ? Image.network(
+                                event.image!,
+                                height: 180,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                height: 180,
+                                color: Colors.grey.shade300,
+                                child: const Center(child: Icon(Icons.image)),
+                              ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              event.title ?? '-',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 24, 30, 35),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.location_on,
+                                    size: 16, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Text(event.kota ?? '-'),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    event.kategori?.kategori ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today,
+                                    size: 14, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Text(
+                                  event.tglMulai ?? 'Tanggal tidak tersedia',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Divider(height: 24),
-        ],
+              );
+            },
+          );
+        },
       ),
     );
   }

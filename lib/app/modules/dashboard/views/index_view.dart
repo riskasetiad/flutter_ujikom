@@ -68,7 +68,7 @@ class _IndexViewState extends State<IndexView> {
                         ),
                         child: event.image != null
                             ? Image.network(
-                                ("http://192.168.0.162:8000/${event.image!}"),
+                                ("http://127.0.0.1:8000/${event.image!}"),
                                 height: 180,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
@@ -107,23 +107,6 @@ class _IndexViewState extends State<IndexView> {
                                     size: 16, color: Colors.grey),
                                 const SizedBox(width: 4),
                                 Text(event.kota ?? '-'),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade100,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    event.kategori?.kategori ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                )
                               ],
                             ),
                             const SizedBox(height: 6),

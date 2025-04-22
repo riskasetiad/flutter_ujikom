@@ -36,9 +36,12 @@ class DashboardController extends GetxController {
   Future<EventResponse> getEvent() async {
     try {
       final response = await dio.get(
-        'http:///192.168.0.162:8000/api/events', // URL API
+        'http:///127.0.0.1:8000/api/events', // URL API
         options: Options(
-          headers: {'Authorization': 'Bearer 125|GemcvOa633Fmbu9UuvAJ3xMTcNftfXI9ybS4ym8U6b24b405'},
+          headers: {
+            'Authorization':
+                'Bearer 3|H9JvbIdew73yWfKHK2dXAbCxjvm5c8jtGA2gvZyse6ecf103'
+          },
           contentType: 'application/json',
         ),
       );
@@ -61,9 +64,12 @@ class DashboardController extends GetxController {
   Future<void> getYourEvent() async {
     try {
       final response = await dio.get(
-        'http:///192.168.0.162:8000/api/your-event', // URL API
+        'http:///127.0.0.1:8000/api/your-event', // URL API
         options: Options(
-          headers: {'Authorization': 'Bearer 125|GemcvOa633Fmbu9UuvAJ3xMTcNftfXI9ybS4ym8U6b24b405'},
+          headers: {
+            'Authorization':
+                'Bearer 3|H9JvbIdew73yWfKHK2dXAbCxjvm5c8jtGA2gvZyse6ecf103'
+          },
           contentType: 'application/json',
         ),
       );
@@ -81,6 +87,7 @@ class DashboardController extends GetxController {
 
   /// Refresh semua event (gunakan untuk pull-to-refresh)
   Future<void> refreshEvents() async {
+    // Mengambil ulang data event
     eventFuture = getEvent();
     await getYourEvent();
   }

@@ -1,4 +1,5 @@
 import 'package:eventway_p5/app/data/event_response.dart';
+import 'package:eventway_p5/app/utils/html_cleaner.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,11 +24,8 @@ class EventDetailView extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: event.image != null
-                  ? Image.network(
-                      ("http://192.168.0.162:8000/${event.image!}"),
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.cover)
+                  ? Image.network(("http://127.0.0.1:8000/${event.image!}"),
+                      height: 200, width: double.infinity, fit: BoxFit.cover)
                   : Container(
                       height: 200,
                       color: Colors.grey.shade300,
@@ -51,14 +49,6 @@ class EventDetailView extends StatelessWidget {
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.category, size: 16),
-                        const SizedBox(width: 6),
-                        Text(event.kategori?.kategori ?? '-'),
-                      ],
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -105,7 +95,7 @@ class EventDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      event.deskripsi ?? '-',
+                      parseHtmlString(event.deskripsi ?? '-'),
                       textAlign: TextAlign.justify,
                       style: const TextStyle(fontSize: 14),
                     ),
